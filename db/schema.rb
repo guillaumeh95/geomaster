@@ -10,10 +10,51 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171216121940) do
+ActiveRecord::Schema.define(version: 20171216123201) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "answers", force: :cascade do |t|
+    t.string "answer"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "games", force: :cascade do |t|
+    t.integer "score"
+    t.bigint "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_games_on_user_id"
+  end
+
+  create_table "question_choices", force: :cascade do |t|
+    t.string "choice"
+    t.bigint "question_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["question_id"], name: "index_question_choices_on_question_id"
+  end
+
+  create_table "question_to_answers", force: :cascade do |t|
+    t.bigint "game_id"
+    t.bigint "question_id"
+    t.bigint "answer_id"
+    t.integer "nb_points"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["answer_id"], name: "index_question_to_answers_on_answer_id"
+    t.index ["game_id"], name: "index_question_to_answers_on_game_id"
+    t.index ["question_id"], name: "index_question_to_answers_on_question_id"
+  end
+
+  create_table "questions", force: :cascade do |t|
+    t.string "question"
+    t.string "level"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
@@ -32,4 +73,9 @@ ActiveRecord::Schema.define(version: 20171216121940) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "games", "users"
+  add_foreign_key "question_choices", "questions"
+  add_foreign_key "question_to_answers", "answers"
+  add_foreign_key "question_to_answers", "games"
+  add_foreign_key "question_to_answers", "questions"
 end

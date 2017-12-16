@@ -15,14 +15,18 @@ ActiveRecord::Schema.define(version: 20171216123201) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "answers", force: :cascade do |t|
-    t.string "answer"
+  create_table "game_questions", force: :cascade do |t|
+    t.bigint "game_id"
+    t.bigint "question_id"
+    t.integer "nb_points", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["game_id"], name: "index_game_questions_on_game_id"
+    t.index ["question_id"], name: "index_game_questions_on_question_id"
   end
 
   create_table "games", force: :cascade do |t|
-    t.integer "score"
+    t.integer "score", default: 0
     t.bigint "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -37,20 +41,9 @@ ActiveRecord::Schema.define(version: 20171216123201) do
     t.index ["question_id"], name: "index_question_choices_on_question_id"
   end
 
-  create_table "question_to_answers", force: :cascade do |t|
-    t.bigint "game_id"
-    t.bigint "question_id"
-    t.bigint "answer_id"
-    t.integer "nb_points"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["answer_id"], name: "index_question_to_answers_on_answer_id"
-    t.index ["game_id"], name: "index_question_to_answers_on_game_id"
-    t.index ["question_id"], name: "index_question_to_answers_on_question_id"
-  end
-
   create_table "questions", force: :cascade do |t|
     t.string "question"
+    t.string "answer"
     t.string "level"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -73,9 +66,8 @@ ActiveRecord::Schema.define(version: 20171216123201) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "game_questions", "games"
+  add_foreign_key "game_questions", "questions"
   add_foreign_key "games", "users"
   add_foreign_key "question_choices", "questions"
-  add_foreign_key "question_to_answers", "answers"
-  add_foreign_key "question_to_answers", "games"
-  add_foreign_key "question_to_answers", "questions"
 end

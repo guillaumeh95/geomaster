@@ -8,11 +8,25 @@
 
 Question.destroy_all
 
-Question.create!(question: "What is the capital city of Paris?", answer: "Paris", level: "easy")
-Question.create!(question: "What is the capital city of Japan?", answer: "Tokyo", level: "easy")
-Question.create!(question: "What is the capital city of Italy?", answer: "Rome", level: "easy")
-Question.create!(question: "What is the capital city of Spain?", answer: "Madrid", level: "easy")
-Question.create!(question: "What is the capital city of Portugal?", answer: "Lisbon", level: "easy")
-Question.create!(question: "What is the capital city of Switzerland?", answer: "Bern", level: "easy")
-Question.create!(question: "What is the capital city of Sweden?", answer: "Stockholm", level: "easy")
-Question.create!(question: "What is the capital city of Luxembourg?", answer: "Luxembourg", level: "easy")
+countries = Restcountry::Country.all
+capitals = []
+countries.each do |country|
+  capitals << country.capital
+end
+
+countries.each do |country|
+  question = Question.new(question: "What is the capital city of #{country.name}?", answer: "#{country.capital}")
+
+  # Correct choice
+  question_choice_correct = QuestionChoice.new(choice: country.capital)
+  question_choice_correct.question = question
+  question_choice_correct.save
+
+  # Incorrect choices
+  4.times do
+    question_choice_incorrect = QuestionChoice.new(choice: capitals.sample)
+    question_choice_incorrect.question = question
+    question_choice_incorrect.save
+  end
+  question.save
+end

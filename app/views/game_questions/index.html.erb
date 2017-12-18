@@ -1,0 +1,12 @@
+<% @game_questions.each do |game_question| %>
+  <p><%= game_question.question.question %></p>
+  <%= simple_form_for @game_question do |f| %>
+    <%= f.input, collection: game_question.question.question_choices %>
+    <%#= f.input :answer, as: :hidden, input_html: { value: "b", disabled: true } %>
+    <%#= f.input :answer, as: :hidden, input_html: { value: "c", disabled: true } %>
+    <%#= f.input :answer, as: :hidden, input_html: { value: "d", disabled: true } %>
+    <%#= f.submit "Continue" %>
+  <% end %>
+<% end %>
+
+<p><%= link_to "Score", score_game_path(@game) %></p>
